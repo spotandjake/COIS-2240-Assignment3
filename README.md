@@ -1,11 +1,14 @@
 # Assignment 3
 
+A simple java RentalSystem for COIS 2240.
+
 # Getting started
+
+This process is made a little easier if you have nix installed otherwise you need `gradle` and `java8` installed, it should be possible to build without gradle but no guarantees.
 
 ## Cloning
 
 In order to use the project start by running:
-TODO:
 
 ```bash
 git clone https://github.com/spotandjake/COIS-2240-Assignment3
@@ -13,7 +16,7 @@ git clone https://github.com/spotandjake/COIS-2240-Assignment3
 
 ## Building
 
-If you have nix installed you can use the tasksystem however the project still builds fine without it you just need to run the commands normally and ensure `java 8` is installed:
+If you have nix installed you can use the tasksystem however the project still builds fine without it you just need to run the commands normally and ensure `java 8` and `gradle` is installed:
 
 ### Nix:
 
@@ -24,9 +27,8 @@ task
 ### No Nix:
 
 ```bash
-mkdir -p bin
-javac -d bin/ -cp src src/VehicleRentalApp.java
-java -ea -cp bin VehicleRentalApp
+gradle build -x test # Build project - not tests
+java -ea -cp build/classes/java/main VehicleRentalApp # Run the application
 ```
 
 ## Formatting
@@ -35,6 +37,20 @@ This only works with nix installed but isn't a neccessity for running the code, 
 
 ```bash
 task fmt
+```
+
+## Testing
+
+In order to run the test suite run:
+
+```bash
+task test
+```
+
+or without nix run:
+
+```bash
+gradle test
 ```
 
 ## License

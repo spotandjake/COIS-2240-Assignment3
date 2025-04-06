@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.3')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/', 'test/']
+        }
+    }
+}
+
+
+application {
+    mainClass = 'VehicleRentalApp'
+}
+
+run {
+    standardInput = System.in
+}
+
+test {
+    useJUnitPlatform() // Ensure Gradle uses JUnit Platform to run tests
+    testLogging {
+		events "passed", "skipped", "failed"
+	}
+}

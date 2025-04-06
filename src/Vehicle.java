@@ -1,4 +1,6 @@
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class Vehicle implements Serializable {
   private String licensePlate;
@@ -37,7 +39,10 @@ public abstract class Vehicle implements Serializable {
   // External api
 
   public void setLicensePlate(String plate) {
-    this.licensePlate = plate == null ? null : plate.toUpperCase();
+    if (!isValidPlate(plate)) {
+      throw new IllegalArgumentException("Invalid license plate: " + plate);
+    }
+    this.licensePlate = plate.toUpperCase();
   }
 
   public void setStatus(VehicleStatus status) {
@@ -76,5 +81,17 @@ public abstract class Vehicle implements Serializable {
         + " | "
         + status
         + " |";
+  }
+
+  private boolean isValidPlate(String plate) {
+    // Empty or too long
+    if (plate == null) return false;
+    if (plate.isEmpty()) return false;
+    // Check format: 3 letters, 3 digits
+    Pattern pattern = Pattern.compile("^[A-Za-z]{3}[0-9]{3}$");
+    Matcher matcher = pattern.matcher(plate);
+    if (!matcher.matches()) return false;
+    // It's valid
+    return true;
   }
 }

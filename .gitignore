@@ -3,6 +3,8 @@
 
 # Java Artifacts
 bin/
+build/
+.gradle/
 
 # Program Artifacts
 *.txt

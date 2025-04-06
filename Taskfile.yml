@@ -3,9 +3,12 @@ tasks:
   # task - builds and runs the app
   default:
     cmds:
-      - mkdir -p bin # Ensure the bin directory exists
-      - javac -d bin/ -cp src src/VehicleRentalApp.java # Compile `src/` to `bin/`
-      - java -ea -cp bin VehicleRentalApp # Run the application
+      - gradle build -x test # Build project - not tests
+      - java -ea -cp build/classes/java/main VehicleRentalApp # Run the application
+  # task - test
+  test:
+    cmds:
+      - gradle test --warning-mode=none # Run tests
   # task fmt - runs the formatter
   fmt:
     cmds:
@@ -15,3 +18,12 @@ tasks:
     deps: [fmt] # Runs task fmt first
     cmds:
       - git diff --exit-code --name-only # Exits on changes
+  # Clean
+  clean:
+    cmds:
+      - rm -rf bin/
+      - rm -rf build/
+      - rm -rf .gradle/
+      - rm -f vehicles.txt
+      - rm -f customers.txt
+      - rm -f rental_records.txt
