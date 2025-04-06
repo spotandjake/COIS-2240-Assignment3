@@ -1,4 +1,8 @@
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,7 +15,12 @@ public class RentalSystem {
   private RentalSystem() {}
 
   public static RentalSystem getInstance() {
-    return instance == null ? new RentalSystem() : instance;
+    if (instance == null) {
+      instance = new RentalSystem();
+      // Load data from files - Note important we do it here rather than in the constructor
+      instance.loadData();
+    }
+    return instance;
   }
 
   private List<Vehicle> vehicles = new ArrayList<>();
@@ -140,5 +149,113 @@ public class RentalSystem {
 
   private void saveRecord(RentalRecord obj) {
     this.saveSerializable("rental_records.txt", obj);
+  }
+
+  private void loadVehicleData(String filePath) {
+    FileInputStream fileStream = null;
+    ObjectInputStream objStream = null;
+    // Load Vehicles
+    try {
+      File file = new File(filePath);
+      if (!file.exists()) return;
+      fileStream = new FileInputStream(filePath);
+      objStream = new ObjectInputStream(fileStream);
+      // Deserialize and read
+      while (true) {
+        Object obj = objStream.readObject();
+        if (!(obj instanceof Vehicle)) {
+          System.out.println("Invalid object type in vehicles file.");
+          continue; // Skip if not a Vehicle
+        }
+        // Add to vehicles list
+        vehicles.add((Vehicle) obj);
+      }
+    } catch (EOFException e) {
+      // End of file reached, ignore this exception
+    } catch (Exception e) {
+      System.out.println("Error reading from file: " + e.getMessage());
+    } finally {
+      try {
+        if (objStream != null) objStream.close();
+        if (fileStream != null) fileStream.close();
+      } catch (Exception e) {
+        System.out.println("Error closing file: " + e.getMessage());
+      }
+    }
+  }
+
+  private void loadCustomerData(String filePath) {
+    FileInputStream fileStream = null;
+    ObjectInputStream objStream = null;
+    // Load Customers
+    try {
+      File file = new File(filePath);
+      if (!file.exists()) return;
+      fileStream = new FileInputStream(filePath);
+      objStream = new ObjectInputStream(fileStream);
+      // Deserialize and read
+      while (true) {
+        Object obj = objStream.readObject();
+        if (!(obj instanceof Customer)) {
+          System.out.println("Invalid object type in customers file.");
+          continue; // Skip if not a Vehicle
+        }
+        // Add to vehicles list
+        customers.add((Customer) obj);
+      }
+    } catch (EOFException e) {
+      // End of file reached, ignore this exception
+    } catch (Exception e) {
+      System.out.println("Error reading from file: " + e.getMessage());
+    } finally {
+      try {
+        if (objStream != null) objStream.close();
+        if (fileStream != null) fileStream.close();
+      } catch (Exception e) {
+        System.out.println("Error closing file: " + e.getMessage());
+      }
+    }
+  }
+
+  private void loadRentalData(String filePath) {
+    FileInputStream fileStream = null;
+    ObjectInputStream objStream = null;
+    // Load Rental Records
+    try {
+      File file = new File(filePath);
+      if (!file.exists()) return;
+      fileStream = new FileInputStream(filePath);
+      objStream = new ObjectInputStream(fileStream);
+      // Deserialize and read
+      while (true) {
+        Object obj = objStream.readObject();
+        if (!(obj instanceof RentalRecord)) {
+          System.out.println("Invalid object type in rental records file.");
+          continue; // Skip if not a Vehicle
+        }
+        // Add to vehicles list
+        rentalHistory.addRecord((RentalRecord) obj);
+      }
+    } catch (EOFException e) {
+      // End of file reached, ignore this exception
+    } catch (Exception e) {
+      System.out.println("Error reading from file: " + e.getMessage());
+    } finally {
+      try {
+        if (objStream != null) objStream.close();
+        if (fileStream != null) fileStream.close();
+      } catch (Exception e) {
+        System.out.println("Error closing file: " + e.getMessage());
+      }
+    }
+  }
+
+  private void loadData() {
+    // Load Vehicles
+    this.loadVehicleData("vehicles.txt");
+    // Load Customers
+    this.loadCustomerData("customers.txt");
+    // Load Rental Records
+    this.loadRentalData("rental_records.txt");
   }
 }
