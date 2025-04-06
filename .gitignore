@@ -1,0 +1,8 @@
+# Nix Artifacts
+.direnv/
+
+# Java Artifacts
+bin/
+
+# MacOS
+.DS_Store
