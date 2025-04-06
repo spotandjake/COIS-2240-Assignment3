@@ -27,14 +27,22 @@ public class RentalSystem {
   private List<Customer> customers = new ArrayList<>();
   private RentalHistory rentalHistory = new RentalHistory();
 
-  public void addVehicle(Vehicle vehicle) {
+  public boolean addVehicle(Vehicle vehicle) {
+    if (this.findVehicleByPlate(vehicle.getLicensePlate()) != null) {
+      return false;
+    }
     vehicles.add(vehicle);
     this.saveVehicle(vehicle);
+    return true;
   }
 
-  public void addCustomer(Customer customer) {
+  public boolean addCustomer(Customer customer) {
+    if (this.findCustomerById(customer.getCustomerId()) != null) {
+      return false;
+    }
     customers.add(customer);
     this.saveCustomer(customer);
+    return true;
   }
 
   public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
@@ -127,13 +135,18 @@ public class RentalSystem {
   // File I/O methods to save and load vehicles and customers
   private void saveSerializable(String fileName, Serializable obj) {
     try {
-      FileOutputStream file = new FileOutputStream(fileName, true); // Open in append mode
-      ObjectOutputStream out = new ObjectOutputStream(file);
+      File file = new File(fileName);
+      boolean fileExists = file.exists();
+      FileOutputStream fileStream = new FileOutputStream(fileName, true); // Open in append mode
+      ObjectOutputStream out =
+          fileExists
+              ? new AppendingObjectOutputStream(fileStream)
+              : new ObjectOutputStream(fileStream);
       // Serialize and write
       out.writeObject(obj);
       // Close stream
       out.close();
-      file.close();
+      fileStream.close();
     } catch (Exception e) {
       System.out.println("Error writing to file: " + e.getMessage());
     }
@@ -168,12 +181,13 @@ public class RentalSystem {
           continue; // Skip if not a Vehicle
         }
         // Add to vehicles list
-        vehicles.add((Vehicle) obj);
+        this.addVehicle((Vehicle) obj);
       }
     } catch (EOFException e) {
       // End of file reached, ignore this exception
     } catch (Exception e) {
-      System.out.println("Error reading from file: " + e.getMessage());
+      e.printStackTrace();
+      System.out.println("Error reading from vehicle file: " + e.getMessage());
     } finally {
       try {
         if (objStream != null) objStream.close();
@@ -201,12 +215,12 @@ public class RentalSystem {
           continue; // Skip if not a Vehicle
         }
         // Add to vehicles list
-        customers.add((Customer) obj);
+        this.addCustomer((Customer) obj);
       }
     } catch (EOFException e) {
       // End of file reached, ignore this exception
     } catch (Exception e) {
-      System.out.println("Error reading from file: " + e.getMessage());
+      System.out.println("Error reading from customer file: " + e.getMessage());
     } finally {
       try {
         if (objStream != null) objStream.close();
@@ -234,12 +248,12 @@ public class RentalSystem {
           continue; // Skip if not a Vehicle
         }
         // Add to vehicles list
-        rentalHistory.addRecord((RentalRecord) obj);
+        this.rentalHistory.addRecord((RentalRecord) obj);
       }
     } catch (EOFException e) {
       // End of file reached, ignore this exception
     } catch (Exception e) {
-      System.out.println("Error reading from file: " + e.getMessage());
+      System.out.println("Error reading from record file: " + e.getMessage());
     } finally {
       try {
         if (objStream != null) objStream.close();
@@ -251,6 +265,8 @@ public class RentalSystem {
   }
 
   private void loadData() {
+    // NOTE: We never save the updated vehicle data with the new status
+    // NOTE: This was not in the instructions and doesn't fit into the design given
     // Load Vehicles
     this.loadVehicleData("vehicles.txt");
     // Load Customers

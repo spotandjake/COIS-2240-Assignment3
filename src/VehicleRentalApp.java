@@ -56,8 +56,12 @@ public class VehicleRentalApp {
 
           if (vehicle != null) {
             vehicle.setLicensePlate(plate);
-            rentalSystem.addVehicle(vehicle);
-            System.out.print("Vehicle added.");
+            boolean added = rentalSystem.addVehicle(vehicle);
+            if (added) {
+              System.out.print("Vehicle added.");
+            } else {
+              System.out.println("Vehicle with this license plate already exists.");
+            }
           } else {
             System.out.print("Vehicle not added.");
           }
@@ -70,8 +74,12 @@ public class VehicleRentalApp {
           scanner.nextLine();
           String cname = scanner.nextLine();
 
-          rentalSystem.addCustomer(new Customer(cid, cname));
-          System.out.println("Customer added.");
+          boolean added = rentalSystem.addCustomer(new Customer(cid, cname));
+          if (!added) {
+            System.out.println("Customer with this ID already exists.");
+          } else {
+            System.out.println("Customer added.");
+          }
           break;
 
         case 3:
