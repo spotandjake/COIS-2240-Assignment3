@@ -3,6 +3,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RentalSystem {
+  private static RentalSystem instance = null;
+
+  private RentalSystem() {}
+
+  public static RentalSystem getInstance() {
+    return instance == null ? new RentalSystem() : instance;
+  }
+
   private List<Vehicle> vehicles = new ArrayList<>();
   private List<Customer> customers = new ArrayList<>();
   private RentalHistory rentalHistory = new RentalHistory();
