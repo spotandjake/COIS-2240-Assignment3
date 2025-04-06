@@ -67,6 +67,7 @@ public class VehicleRentalApp {
           System.out.print("Enter customer ID: ");
           int cid = scanner.nextInt();
           System.out.print("Enter name: ");
+          scanner.nextLine();
           String cname = scanner.nextLine();
 
           rentalSystem.addCustomer(new Customer(cid, cname));

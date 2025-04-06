@@ -4,5 +4,8 @@
 # Java Artifacts
 bin/
 
+# Program Artifacts
+*.txt
+
 # MacOS
 .DS_Store

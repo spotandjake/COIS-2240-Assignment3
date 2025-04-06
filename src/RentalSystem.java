@@ -1,3 +1,6 @@
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +20,21 @@ public class RentalSystem {
 
   public void addVehicle(Vehicle vehicle) {
     vehicles.add(vehicle);
+    this.saveVehicle(vehicle);
   }
 
   public void addCustomer(Customer customer) {
     customers.add(customer);
+    this.saveCustomer(customer);
   }
 
   public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
     if (vehicle.getStatus() == Vehicle.VehicleStatus.AVAILABLE) {
       vehicle.setStatus(Vehicle.VehicleStatus.RENTED);
-      rentalHistory.addRecord(new RentalRecord(vehicle, customer, date, amount, "RENT"));
+      // Note: It would be better to have an addRecord handlet this
+      RentalRecord record = new RentalRecord(vehicle, customer, date, amount, "RENT");
+      rentalHistory.addRecord(record);
+      this.saveRecord(record);
       System.out.println("Vehicle rented to " + customer.getCustomerName());
     } else {
       System.out.println("Vehicle is not available for renting.");
@@ -36,7 +44,10 @@ public class RentalSystem {
   public void returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
     if (vehicle.getStatus() == Vehicle.VehicleStatus.RENTED) {
       vehicle.setStatus(Vehicle.VehicleStatus.AVAILABLE);
-      rentalHistory.addRecord(new RentalRecord(vehicle, customer, date, extraFees, "RETURN"));
+      RentalRecord record = new RentalRecord(vehicle, customer, date, extraFees, "RETURN");
+      // Note: It would be better to have an addRecord handlet this
+      rentalHistory.addRecord(record);
+      this.saveRecord(record);
       System.out.println("Vehicle returned by " + customer.getCustomerName());
     } else {
       System.out.println("Vehicle is not rented.");
@@ -102,5 +113,32 @@ public class RentalSystem {
   public Customer findCustomerByName(String name) {
     for (Customer c : customers) if (c.getCustomerName().equalsIgnoreCase(name)) return c;
     return null;
+  }
+
+  // File I/O methods to save and load vehicles and customers
+  private void saveSerializable(String fileName, Serializable obj) {
+    try {
+      FileOutputStream file = new FileOutputStream(fileName, true); // Open in append mode
+      ObjectOutputStream out = new ObjectOutputStream(file);
+      // Serialize and write
+      out.writeObject(obj);
+      // Close stream
+      out.close();
+      file.close();
+    } catch (Exception e) {
+      System.out.println("Error writing to file: " + e.getMessage());
+    }
+  }
+
+  private void saveVehicle(Vehicle obj) {
+    this.saveSerializable("vehicles.txt", obj);
+  }
+
+  private void saveCustomer(Customer obj) {
+    this.saveSerializable("customers.txt", obj);
+  }
+
+  private void saveRecord(RentalRecord obj) {
+    this.saveSerializable("rental_records.txt", obj);
   }
 }
