@@ -55,12 +55,16 @@ public class VehicleRentalApp {
           }
 
           if (vehicle != null) {
-            vehicle.setLicensePlate(plate);
-            boolean added = rentalSystem.addVehicle(vehicle);
-            if (added) {
-              System.out.print("Vehicle added.");
-            } else {
-              System.out.println("Vehicle with this license plate already exists.");
+            try {
+              vehicle.setLicensePlate(plate);
+              boolean added = rentalSystem.addVehicle(vehicle);
+              if (added) {
+                System.out.print("Vehicle added.");
+              } else {
+                System.out.println("Vehicle with this license plate already exists.");
+              }
+            } catch (IllegalArgumentException e) {
+              System.out.println("Invalid license plate format. Vehicle not added.");
             }
           } else {
             System.out.print("Vehicle not added.");
