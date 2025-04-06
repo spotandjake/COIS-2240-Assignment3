@@ -16,11 +16,8 @@ public abstract class Vehicle implements Serializable {
   }
 
   public Vehicle(String make, String model, int year) {
-    if (make == null || make.isEmpty()) this.make = null;
-    else this.make = make.substring(0, 1).toUpperCase() + make.substring(1).toLowerCase();
-
-    if (model == null || model.isEmpty()) this.model = null;
-    else this.model = model.substring(0, 1).toUpperCase() + model.substring(1).toLowerCase();
+    this.make = this.capitalize(make);
+    this.model = this.capitalize(model);
 
     this.year = year;
     this.status = VehicleStatus.AVAILABLE;
@@ -30,6 +27,14 @@ public abstract class Vehicle implements Serializable {
   public Vehicle() {
     this(null, null, 0);
   }
+
+  // Internal helpers
+  private String capitalize(String str) {
+    if (str == null || str.isEmpty()) return null;
+    return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+  }
+
+  // External api
 
   public void setLicensePlate(String plate) {
     this.licensePlate = plate == null ? null : plate.toUpperCase();
