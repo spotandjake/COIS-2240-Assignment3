@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.Month;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,5 +87,18 @@ public class VehicleRentalTest {
     assertEquals(Vehicle.VehicleStatus.AVAILABLE, vehicle.getStatus());
     // Ensure returning fails if not rented
     assertFalse(rentalSystem.returnVehicle(vehicle, customer, date, amt));
+  }
+
+  @Test
+  public void testSingletonRentalSystem() {
+    // Ensure that this cannot be constructed
+    try {
+      Constructor<RentalSystem> constructor = RentalSystem.class.getDeclaredConstructor();
+      assertEquals(Modifier.PRIVATE, constructor.getModifiers());
+    } catch (Exception e) {
+      System.out.println("Error: " + e.getMessage());
+    }
+    // Ensure that the singleton instance is not null
+    assertNotNull(RentalSystem.getInstance());
   }
 }

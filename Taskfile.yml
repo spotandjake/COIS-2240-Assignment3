@@ -8,7 +8,7 @@ tasks:
   # task - test
   test:
     cmds:
-      - gradle test --warning-mode=none # Run tests
+      - gradle test # Run tests
   # task fmt - runs the formatter
   fmt:
     cmds:
